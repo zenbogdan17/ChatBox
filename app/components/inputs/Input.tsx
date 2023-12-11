@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { FieldErrors, FieldValues, UseFormRegister } from 'react-hook-form';
 
 interface InputProps {
-  label: string;
+  label?: string;
   id: string;
   type?: string;
   placeholder?: string;
