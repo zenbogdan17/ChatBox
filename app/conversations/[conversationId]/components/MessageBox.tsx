@@ -6,20 +6,28 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ImageModal from './ImageModal';
 import MessageModal from './MessageModal';
 
 interface MessageBoxProps {
   isLast?: boolean;
   data: FullMessageType;
+  handlerReply: (data: FullMessageType) => void;
 }
 
-const MessageBox = ({ isLast, data }: MessageBoxProps) => {
+const MessageBox = ({ isLast, data, handlerReply }: MessageBoxProps) => {
   const session = useSession();
   const [editedMessage, setEditedMessage] = useState<FullMessageType | null>(
     null
   );
+
+  const [replyData, setReplyData] = useState<{
+    id: string;
+    body: string;
+    user: string;
+  } | null>(null);
+
   const [isDelete, setIsDelete] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [messageModal, setMessageModal] = useState({
@@ -37,11 +45,11 @@ const MessageBox = ({ isLast, data }: MessageBoxProps) => {
   const avatar = clsx(isOwn && 'order-2');
   const body = clsx('flex flex-col gap-2', isOwn && 'items-end');
   const message = clsx(
-    'text-sm w-fit overflow-hidden',
+    'text-sm w-fit overflow-hidden ',
     isOwn
       ? 'bg-[var(--dark)] cursor-pointer hover:bg-[var(--black)]'
-      : 'bg-[var(--dark-sea)]',
-    data.image ? 'rounded-md p-0' : 'rounded-full py-2 px-3'
+      : 'bg-[var(--dark-sea)] cursor-pointer hover:bg-[var(--dark-sea2)]',
+    data.image ? 'rounded-md p-0' : 'rounded-2xl py-2 px-3'
   );
 
   const handlerMessage = (data: FullMessageType) => {
@@ -57,6 +65,21 @@ const MessageBox = ({ isLast, data }: MessageBoxProps) => {
 
   const handleEdit = (editedData: FullMessageType) => {
     setEditedMessage(editedData);
+  };
+
+  useEffect(() => {
+    if (replyData) {
+      localStorage.setItem('replyData', JSON.stringify(replyData));
+    }
+  }, [replyData]);
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (data.body && data.sender.name) {
+      handlerReply(data);
+      setReplyData({ id: data.id, body: data.body, user: data.sender.name });
+    }
   };
 
   return (
@@ -79,6 +102,7 @@ const MessageBox = ({ isLast, data }: MessageBoxProps) => {
             <div className="flex items-center gap-1">
               <div className="text-sm">{data.sender.name}</div>
             </div>
+
             <div className={message}>
               <ImageModal
                 src={data.image}
@@ -96,8 +120,20 @@ const MessageBox = ({ isLast, data }: MessageBoxProps) => {
                   className="object-cover cursor-pointer hover:scale-110 transition translate"
                 />
               ) : (
-                <div onClick={() => handlerMessage(data)}>
-                  <div onClick={() => handlerMessage(data)}>
+                <div
+                  onClick={() => handlerMessage(data)}
+                  onContextMenu={handleContextMenu}
+                >
+                  {data.replyData && (
+                    <div className="border-l-2 border-[var(--violet)] m-1 p-1">
+                      <h3 className="text-[var(--grey)]">
+                        {data.replyData.user}
+                      </h3>
+                      <p>{data.replyData.body}</p>
+                    </div>
+                  )}
+
+                  <div className={`${data.replyData && 'pl-2'}`}>
                     {typeof editedMessage === 'object' &&
                     editedMessage !== null &&
                     'body' in editedMessage &&
@@ -113,7 +149,7 @@ const MessageBox = ({ isLast, data }: MessageBoxProps) => {
             )}
 
             <div className="text-xs text-[var(--sea)] absolute  bottom-0">
-              {format(new Date(data.createdAt), 'm:k')}
+              {format(new Date(data.createdAt), 'k:m')}
             </div>
           </div>
         </div>

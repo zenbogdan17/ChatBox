@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const currentUser = await getCurrentUser();
     const body = await request.json();
 
-    const { message, image, conversationId } = body;
+    const { message, image, conversationId, replyData } = body;
 
     if (!currentUser?.id || !currentUser?.email) {
       return new NextResponse('Unauthorized', { status: 401 });
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
             id: currentUser.id,
           },
         },
+        replyData: replyData,
       },
       include: {
         seen: true,

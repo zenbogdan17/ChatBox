@@ -77,4 +77,12 @@ model Message {
   
   senderId String @db.ObjectId
   sender User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  replyData ReplyData?
+}
+
+type ReplyData {
+  id String
+  user String
+  body String
 }

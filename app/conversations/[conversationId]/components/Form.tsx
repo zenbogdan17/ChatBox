@@ -24,7 +24,17 @@ const Form = () => {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setValue('message', '', { shouldValidate: true });
 
-    axios.post('/api/messages', { ...data, conversationId: conversationId });
+    let storedData: string | null = localStorage.getItem('replyData');
+
+    storedData = storedData && JSON.parse(storedData);
+
+    axios.post('/api/messages', {
+      ...data,
+      conversationId: conversationId,
+      replyData: storedData,
+    });
+
+    localStorage.removeItem('replyData');
   };
 
   const handlerUpload = (result: any) => {
