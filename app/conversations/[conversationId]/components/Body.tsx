@@ -2,7 +2,7 @@
 
 import useConversation from '@/app/hooks/useConversation';
 import { FullMessageType } from '@/app/types';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MessageBox from './MessageBox';
 import axios from 'axios';
 import { pusherClient } from '@/app/libs/pusher';
@@ -12,12 +12,16 @@ import { IoClose } from 'react-icons/io5';
 
 interface BodyProps {
   initialMessages: FullMessageType[];
+  searchMessage: null | FullMessageType;
 }
 
-const Body = ({ initialMessages }: BodyProps) => {
+const Body = ({ initialMessages, searchMessage }: BodyProps) => {
   const [replyToMessage, setReplyToMessage] = useState<FullMessageType | null>(
     null
   );
+  const [targetMessageRef, setTargetMessageRef] =
+    useState<HTMLDivElement | null>(null);
+
   const [messages, setMessages] = useState(initialMessages);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -71,6 +75,12 @@ const Body = ({ initialMessages }: BodyProps) => {
     setReplyToMessage(null);
   }, [messages]);
 
+  useEffect(() => {
+    if (targetMessageRef) {
+      targetMessageRef.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [searchMessage]);
+
   return (
     <div className="flex-1 overflow-y-auto bg-[var(--bg2)] text-[var(--white)] z-10 relative">
       {messages.map((message, i) => (
@@ -79,6 +89,7 @@ const Body = ({ initialMessages }: BodyProps) => {
           data={message}
           key={message.id}
           handlerReply={(data: FullMessageType) => setReplyToMessage(data)}
+          setTargetMessageRef={setTargetMessageRef}
         />
       ))}
       <div ref={bottomRef} className="pt-24" />

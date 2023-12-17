@@ -29,7 +29,7 @@ const Input = ({
       <label className="block text-sm font-medium leading-6 " htmlFor={id}>
         {label}
       </label>
-      <div className="mt-2">
+      <div className={`${label && 'mt-2'}`}>
         <input
           id={id}
           type={type}

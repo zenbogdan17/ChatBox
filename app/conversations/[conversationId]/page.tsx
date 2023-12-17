@@ -5,6 +5,7 @@ import EmptyState from '@/app/components/EmptyState';
 import Headers from './components/Headers';
 import Body from './components/Body';
 import Form from './components/Form';
+import Conversations from './components/Conversations';
 
 interface IParams {
   conversationId: string;
@@ -28,9 +29,7 @@ const ConversationId = async ({ params }: { params: IParams }) => {
   return (
     <div className="lg:pl-[400px] h-full">
       <div className="h-full flex flex-col">
-        <Headers conversation={conversation} />
-        <Body initialMessages={messages} />
-        <Form />
+        <Conversations conversation={conversation} messages={messages} />
       </div>
     </div>
   );

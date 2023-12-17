@@ -14,9 +14,17 @@ interface MessageBoxProps {
   isLast?: boolean;
   data: FullMessageType;
   handlerReply: (data: FullMessageType) => void;
+  setTargetMessageRef: React.Dispatch<
+    React.SetStateAction<HTMLDivElement | null>
+  >;
 }
 
-const MessageBox = ({ isLast, data, handlerReply }: MessageBoxProps) => {
+const MessageBox = ({
+  isLast,
+  data,
+  handlerReply,
+  setTargetMessageRef,
+}: MessageBoxProps) => {
   const session = useSession();
   const [touchStart, setTouchStart] = useState(0);
   const [editedMessage, setEditedMessage] = useState<FullMessageType | null>(
@@ -115,6 +123,7 @@ const MessageBox = ({ isLast, data, handlerReply }: MessageBoxProps) => {
           className={`${container} relative`}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
+          ref={(el) => setTargetMessageRef(el)}
         >
           <div className={avatar}>
             <Avatar user={data.sender} />
