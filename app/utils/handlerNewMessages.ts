@@ -4,6 +4,8 @@ export default function handlerNewMessages(
   initialItems: FullConversationType[],
   currentUserEmail: string | null | undefined
 ) {
+  if (!currentUserEmail) return false;
+
   const result = initialItems.map((item) =>
     item.messages?.[item.messages.length - 1]?.seen?.some(
       (seen) => seen.email === currentUserEmail
