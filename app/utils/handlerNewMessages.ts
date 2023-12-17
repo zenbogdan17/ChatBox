@@ -5,7 +5,7 @@ export default function handlerNewMessages(
   currentUserEmail: string | null | undefined
 ) {
   const result = initialItems.map((item) =>
-    item.messages[item.messages.length - 1].seen.some(
+    item.messages?.[item.messages.length - 1]?.seen?.some(
       (seen) => seen.email === currentUserEmail
     )
   );
