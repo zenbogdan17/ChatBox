@@ -1,14 +1,12 @@
-import { useSession } from 'next-auth/react';
 import { FullConversationType } from '../types';
 
 export default function handlerNewMessages(
-  initialItems: FullConversationType[]
+  initialItems: FullConversationType[],
+  currentUserEmail: string | null | undefined
 ) {
-  const session = useSession();
-
   const result = initialItems.map((item) =>
     item.messages[item.messages.length - 1].seen.some(
-      (seen) => seen.email === session.data?.user?.email
+      (seen) => seen.email === currentUserEmail
     )
   );
 

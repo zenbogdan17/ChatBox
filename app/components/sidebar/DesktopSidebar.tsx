@@ -102,7 +102,10 @@ const DesktopSidebar = ({ currentUser, initialItems }: DesktopSidebarProps) => {
           <ul role="list" className="flex flex-col items-center space-y-1">
             {routes.map((item) => (
               <DesktopItem
-                newMessage={handlerNewMessages(items)}
+                newMessage={handlerNewMessages(
+                  items,
+                  session.data?.user?.email
+                )}
                 key={item.label}
                 href={item.href}
                 label={item.label}
