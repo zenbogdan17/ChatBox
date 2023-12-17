@@ -12,6 +12,16 @@ export async function POST(request: Request) {
       return new NextResponse('Missing info', { status: 400 });
     }
 
+    const isUniqueMail = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (isUniqueMail) {
+      return new NextResponse('Not Unique Mail  Error', { status: 500 });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({

@@ -13,6 +13,7 @@ import { find } from 'lodash';
 import useConversation from '@/app/hooks/useConversation';
 import { useRouter } from 'next/navigation';
 import handlerNewMessages from '@/app/utils/handlerNewMessages';
+import getConversations from '@/app/actions/getConversations';
 
 interface DesktopSidebarProps {
   currentUser: User;
@@ -28,6 +29,8 @@ const DesktopSidebar = ({ currentUser, initialItems }: DesktopSidebarProps) => {
   const [items, setItems] = useState(initialItems);
 
   const { conversationId } = useConversation();
+
+  const newMessage = handlerNewMessages(items, session.data?.user?.email);
 
   const pusherKey = useMemo(() => {
     return session.data?.user?.email ?? null;
@@ -102,10 +105,7 @@ const DesktopSidebar = ({ currentUser, initialItems }: DesktopSidebarProps) => {
           <ul role="list" className="flex flex-col items-center space-y-1">
             {routes.map((item) => (
               <DesktopItem
-                newMessage={handlerNewMessages(
-                  items,
-                  session.data?.user?.email
-                )}
+                newMessage={newMessage}
                 key={item.label}
                 href={item.href}
                 label={item.label}

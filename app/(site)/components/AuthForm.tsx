@@ -53,13 +53,13 @@ const AuthForm = () => {
         .post('/api/register', data)
         .then(() => {
           signIn('credentials', data);
+          toast.success('User created!');
         })
         .catch(() => {
           toast.error('Something went wrong!');
         })
         .finally(() => {
           setIsLoading(false);
-          toast.success('User created!');
         });
     }
 
